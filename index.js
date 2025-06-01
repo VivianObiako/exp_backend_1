@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/send-email', formRoutes);
+app.use('/api/send-expEmail', formRoutes);
 
 // Start the server
 app.listen(PORT, () => {
