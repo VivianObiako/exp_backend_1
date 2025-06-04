@@ -18,7 +18,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use("/api/send-expEmail", formRoutes);
 
-app.use("/api/user/delete", async (req, res) => {
+// Handle preflight requests for this route
+app.options("/api/user/delete", cors());
+
+// Use POST for delete endpoint
+app.post("/api/user/delete", async (req, res) => {
   const { userId } = req.body;
 
   const { error: profileError } = await supabase
