@@ -20,6 +20,11 @@ app.use("/api/send-expEmail", formRoutes);
 
 // ...existing code...
 
+// Health check/test API
+app.get("/api/test", (req, res) => {
+  res.status(200).json({ message: "Backend is working!" });
+});
+
 app.post("/api/user/delete", async (req, res) => {
   const { userId } = req.body;
 
