@@ -18,7 +18,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use("/api/send-expEmail", formRoutes);
 
-app.use("/api/user/delete", async (req, res) => {
+// ...existing code...
+
+app.post("/api/user/delete", async (req, res) => {
   const { userId } = req.body;
 
   const { error: profileError } = await supabase
