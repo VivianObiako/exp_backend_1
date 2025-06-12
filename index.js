@@ -58,8 +58,9 @@ app.post("/api/user/delete", async (req, res) => {
 
 app.post("/api/parse", upload.any(), async (req, res) => {
   try {
-    const transactionId = "311604cb-32dc-4880-9b0b-41dc1ef8a67e";
     const file = req.files[0];
+    const receiverEmail = req.body.to;
+    const transactionId = receiverEmail.match(/tx-([a-f0-9\-]+)@/i)[1] || "311604cb-32dc-4880-9b0b-41dc1ef8a67e";
 
     const filePath = `transactions/${transactionId}/${Date.now()}_${
       file.originalname
