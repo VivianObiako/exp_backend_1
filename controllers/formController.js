@@ -3,7 +3,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class FormController {
   async submitForm(req, res) {
-    const { to, subject, text, from } = req.body;
+    const { to, subject, text, from, attachments } = req.body;
 
     // Use provided sender email or fall back to default for backward compatibility
     const senderEmail = from || "transactions@expsouthafrica.co.za";
@@ -24,11 +24,23 @@ class FormController {
       text,
     };
 
+    // Add attachments if provided
+    // Attachments should be an array of objects with: content (base64), filename, and optionally type (mime type)
+    if (attachments && Array.isArray(attachments) && attachments.length > 0) {
+      msg.attachments = attachments.map((attachment) => ({
+        content: attachment.content, // base64 encoded content
+        filename: attachment.filename,
+        type: attachment.type || "application/octet-stream",
+        disposition: "attachment",
+      }));
+    }
+
     console.log("Received form data:", {
       to,
       from: senderEmail,
       subject,
       text,
+      attachmentsCount: attachments ? attachments.length : 0,
     });
 
     sgMail.send(msg).then(
