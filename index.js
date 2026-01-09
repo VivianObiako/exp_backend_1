@@ -13,9 +13,10 @@ const PORT = process.env.PORT || 5000;
 const cors = require("cors");
 app.use(cors());
 
-// Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Middleware - increase body size limit for email attachments
+// Note: Vercel has a 4.5MB limit for serverless functions
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 
 // Routes
 app.use("/api/send-expEmail", formRoutes);
@@ -60,7 +61,9 @@ app.post("/api/parse", upload.any(), async (req, res) => {
   try {
     const file = req.files[0];
     const receiverEmail = req.body.to;
-    const transactionId = receiverEmail.match(/tx-([a-f0-9\-]+)@/i)[1] || "311604cb-32dc-4880-9b0b-41dc1ef8a67e";
+    const transactionId =
+      receiverEmail.match(/tx-([a-f0-9\-]+)@/i)[1] ||
+      "311604cb-32dc-4880-9b0b-41dc1ef8a67e";
 
     const filePath = `transactions/${transactionId}/${Date.now()}_${
       file.originalname
@@ -106,7 +109,7 @@ app.post("/api/parse", upload.any(), async (req, res) => {
       .insert({
         transaction_id: transactionId,
         title: file.originalname,
-        document_type: 'other',
+        document_type: "other",
         file_url: publicUrl,
         file_size: file.size,
         uploaded_by: transactionData.user_id,
@@ -116,7 +119,10 @@ app.post("/api/parse", upload.any(), async (req, res) => {
       .single();
 
     if (docError) {
-      console.error("Error saving data in transaction documents table:", docError);
+      console.error(
+        "Error saving data in transaction documents table:",
+        docError
+      );
       return res.status(500).json({
         message: "Failed to save data in transaction documents table:",
         error: docError.message,
